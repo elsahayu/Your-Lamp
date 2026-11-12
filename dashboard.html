@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Your Lamp</title>
+<style>
+:root{--bg:#202020;--card:#2a2826;--line:rgba(255,255,255,.16);--tx:#fff;--mut:#a9a39b;--amb:#ffb955;--ok:#8fd19e;--bad:#ff8a7a;--f:'Jost','Century Gothic',Futura,system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--f);background:var(--bg);color:var(--tx);font-size:16px;min-height:100vh}
+button,input{font:inherit;color:inherit}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+:focus-visible{outline:2px solid var(--amb);outline-offset:3px}
+#side{position:fixed;inset:0 auto 0 0;width:250px;padding:28px 22px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:32px;background:var(--bg);z-index:5}
+.brand{display:flex;align-items:center;gap:12px;font-size:18px;line-height:1.15}
+.brand svg{width:40px;height:40px;filter:drop-shadow(8px 6px 10px rgba(255,185,85,.45))}
+.brand small{display:block;color:var(--mut);font-size:13px}
+.nav{display:flex;flex-direction:column;gap:10px}
+.nav a{display:flex;align-items:center;gap:12px;padding:12px 18px;border:1px solid var(--line);border-radius:99px;color:var(--tx);text-decoration:none;cursor:pointer}
+.nav a:hover{border-color:var(--amb)}
+.nav a.on{background:var(--amb);border-color:var(--amb);color:#202020;font-weight:500}
+main{margin-left:250px;padding:28px 44px 64px;max-width:1190px}
+.top{display:flex;justify-content:flex-end;margin-bottom:8px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border:1px solid var(--line);border-radius:99px;background:none;font-size:14px;cursor:pointer;white-space:nowrap}
+.pill:before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.pill.ok{color:var(--ok);border-color:var(--ok)}.pill.bad{color:var(--bad);border-color:var(--bad)}
+h2{font-weight:300;font-size:clamp(44px,7vw,72px);letter-spacing:-.02em;line-height:1;margin:6px 0 28px}
+section{display:none}section.on{display:block}
+.note{border:1px solid var(--amb);color:var(--amb);border-radius:10px;padding:12px 16px;font-size:14px;margin-bottom:20px;display:none}
+.stage{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;text-align:center;padding:10px 0}
+.stage:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 50% 38%,rgba(255,185,85,.24),transparent 62%);opacity:0;transition:opacity .4s}
+.stage.on:before{opacity:1}
+.bulb{width:min(240px,55vw);height:auto;--glass:#3a3733;--fil:#6d675f;--cap:#77716a;transition:filter .4s}
+.stage.on .bulb{--glass:#ffd666;--fil:#fff6cf;filter:drop-shadow(0 0 46px rgba(255,185,85,.85))}
+.st{font-weight:300;font-size:clamp(36px,5vw,54px);letter-spacing:-.02em;color:#6d675f;margin-top:12px;transition:.4s}
+.stage.on .st{color:#fff;text-shadow:0 0 26px rgba(255,185,85,.7)}
+.src{color:var(--mut);font-size:14px;margin-top:4px}
+.dash{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:center}
+.cards{display:grid;gap:16px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+.wrap{max-width:900px;margin:0 auto}
+.btn{border:1px solid var(--amb);background:var(--amb);color:#202020;padding:11px 24px;border-radius:99px;font-weight:500;cursor:pointer}
+.btn.lg{padding:14px 46px;font-size:18px}
+.btn.ghost{background:none;color:var(--tx);border-color:var(--line)}.btn.ghost:hover{border-color:var(--amb)}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px}
+.card h3{font-weight:400;font-size:15px;color:var(--mut);margin-bottom:12px}
+.big{font-size:30px;font-weight:400;color:var(--amb);overflow-wrap:anywhere}
+.sub{color:var(--mut);font-size:14px;margin-top:8px;line-height:1.45}
+.meter{height:6px;border-radius:9px;background:rgba(255,255,255,.12);margin-top:14px;overflow:hidden}.meter span{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-top:16px}
+.row.c{justify-content:center;margin:20px 0 24px}
+.seg{display:flex;gap:10px}.seg button{flex:1;padding:11px;border:1px solid var(--line);border-radius:99px;background:none;cursor:pointer}.seg button.on{background:var(--amb);color:#202020;border-color:var(--amb)}
+label{display:block;font-size:14px;color:var(--mut);margin-bottom:6px}
+input[type=number],input[type=time]{width:100%;padding:11px 14px;background:#1b1a19;border:1px solid var(--line);border-radius:10px;color-scheme:dark}
+input[type=text]{width:100%;padding:11px 14px;background:#1b1a19;border:1px solid var(--line);border-radius:10px}
+.field{flex:1;min-width:120px}
+.days{display:flex;gap:8px;flex-wrap:wrap}.days label{margin:0;display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:99px;padding:6px 14px;color:var(--tx);font-size:14px;cursor:pointer}
+.days input{accent-color:var(--amb)}
+.list{list-style:none;padding:0;max-height:360px;overflow:auto}
+.list li{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;flex-wrap:wrap;align-items:center}.list li:last-child{border:0}
+.list time{color:var(--mut);min-width:150px}.tag{color:var(--amb)}
+.bars{display:flex;align-items:flex-end;gap:8px;height:190px;margin-top:8px}
+.bars div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:8px;height:100%;font-size:12px;color:var(--mut);text-align:center}
+.bars i{display:block;width:100%;max-width:44px;background:var(--amb);border-radius:6px 6px 0 0;min-height:3px}
+dialog{background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:14px;padding:26px;width:min(440px,92vw);margin:auto}
+dialog::backdrop{background:rgba(0,0,0,.65)}
+dialog label{margin-top:14px}
+@media(max-width:1000px){.dash,.two{grid-template-columns:1fr}}
+@media(max-width:860px){
+#side{inset:auto 0 0 0;width:auto;flex-direction:row;padding:8px 10px;border:0;border-top:1px solid var(--line);gap:0}
+.brand{display:none}
+.nav{flex-direction:row;width:100%;gap:6px}
+.nav a{flex:1;flex-direction:column;gap:4px;padding:8px 4px;font-size:11px;line-height:1.1;text-align:center;border-radius:14px;border-color:transparent}
+main{margin:0;padding:18px 18px 100px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="ic-dash" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+<symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></symbol>
+<symbol id="ic-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+<symbol id="ic-chart" viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></symbol>
+<symbol id="bulb" viewBox="0 0 200 270"><path d="M100 14a76 76 0 0 0-46 136c10 8 16 14 16 30v6h60v-6c0-16 6-22 16-30A76 76 0 0 0 100 14z" fill="var(--glass)" stroke="var(--cap)" stroke-width="3"/><path d="M86 184v-44l14-22 14 22v44" fill="none" stroke="var(--fil)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><g fill="var(--cap)"><rect x="70" y="190" width="60" height="14" rx="4"/><rect x="70" y="208" width="60" height="14" rx="4"/><rect x="70" y="226" width="60" height="14" rx="4"/><path d="M82 244h36a18 14 0 0 1-36 0z"/></g></symbol>
+</defs></svg>
+
+<nav id="side" aria-label="Menu utama">
+  <div class="brand"><svg viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 36h12M20 36V26l-6-8 8-12 7 4-7 12"/><path d="M22 6l9 5-3 5-9-5z" fill="#fff"/></svg><div>Your Lamp<small>Smart Terrace Lamp</small></div></div>
+  <div class="nav">
+    <a href="#dash" data-v="dash" class="on" aria-current="page"><svg class="i"><use href="#ic-dash"/></svg>Dashboard</a>
+    <a href="#ctl" data-v="ctl"><svg class="i"><use href="#ic-bulb"/></svg>Kontrol Lampu</a>
+    <a href="#sch" data-v="sch"><svg class="i"><use href="#ic-cal"/></svg>Jadwal</a>
+    <a href="#usage" data-v="usage"><svg class="i"><use href="#ic-chart"/></svg>Riwayat Pemakaian</a>
+  </div>
+</nav>
+
+<main>
+<div class="top"><button class="pill bad" id="pConn" title="Pengaturan koneksi Blynk">Belum terhubung</button></div>
+<div id="demoNote" class="note"></div>
+
+<!-- DASHBOARD -->
+<section id="dash" class="on">
+  <div class="dash">
+    <div class="stage"><svg class="bulb" viewBox="0 0 200 270" role="img" aria-label="Lampu"><use href="#bulb"/></svg><div class="st" id="dLamp">—</div><div class="src" id="dReason">Sumber: —</div></div>
+    <div class="cards">
+      <div class="card"><h3>Mode</h3><div class="big" id="dMode">—</div></div>
+      <div class="card"><h3>Sensor</h3><div class="big" id="dDetect">Sensor Offline</div><div class="sub">Jarak: <span id="dDist">—</span> cm (batas 150 cm)</div><div class="meter"><span id="distanceMeter"></span></div></div>
+      <div class="card"><h3>Pemakaian hari ini</h3><div class="big" id="dailyUsage">00:00:00</div><div class="sub">Menyala sekarang: <span id="currentUsage">00:00:00</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTROL LAMPU -->
+<section id="ctl">
+  <h2>Kontrol Lampu</h2>
+  <div class="wrap">
+    <div class="stage"><svg class="bulb" viewBox="0 0 200 270" role="img" aria-label="Lampu"><use href="#bulb"/></svg><div class="st" id="cLamp">—</div></div>
+    <div class="row c"><button class="btn lg" id="lampOn">ON</button><button class="btn lg ghost" id="lampOff">OFF</button></div>
+    <div class="two">
+      <div class="card"><h3>Mode</h3>
+        <div class="seg" id="seg"><button data-m="manual">Manual</button><button data-m="auto">Otomatis</button></div>
+        <div class="sub">Manual: lampu diatur lewat tombol dan Otomatis: lampu menyala saat ada orang dan mati sendiri setelah 5 detik.</div></div>
+      <div class="card"><h3>Matikan Lampu Otomatis</h3>
+        <div class="big" id="timerDisplay">Tidak aktif</div>
+        <div class="row"><div class="field"><label for="tmMin">Durasi (menit)</label><input type="number" id="tmMin" min="1" max="600" value="10"></div><button class="btn" id="tmGo">Mulai</button><button class="btn ghost" id="tmStop">Batal</button></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- JADWAL -->
+<section id="sch">
+  <h2>Jadwal</h2>
+  <div class="two">
+    <div class="card"><h3>Tambah jadwal</h3>
+      <div class="row" style="margin-top:0"><div class="field"><label for="schOn">Lampu menyala</label><input type="time" id="schOn" value="18:00"></div><div class="field"><label for="schOff">Lampu mati</label><input type="time" id="schOff" value="05:30"></div></div>
+      <label style="margin-top:16px">Ulangi setiap</label><div class="days" id="scheduleDays"></div>
+      <div class="row"><button class="btn" id="schGo">Tambah Jadwal</button></div>
+      <div class="sub">Note: Maksimal 5 jadwal dapat ditambahkan.</div></div>
+    <div class="card"><h3>Daftar jadwal</h3><ul class="list" id="scheduleList"><li>Belum ada jadwal.</li></ul></div>
+  </div>
+</section>
+
+<!-- RIWAYAT PEMAKAIAN -->
+<section id="usage">
+  <h2>Riwayat Pemakaian</h2>
+  <div class="grid">
+    <div class="card"><h3>Menyala sekarang</h3><div class="big" id="currentUsage2">00:00:00</div></div>
+    <div class="card"><h3>Total hari ini</h3><div class="big" id="dailyUsage2">00:00:00</div></div>
+    <div class="card"><h3>Terakhir menyala</h3><div class="big" style="font-size:18px" id="lastOn">—</div></div>
+    <div class="card"><h3>Terakhir mati</h3><div class="big" style="font-size:18px" id="lastOff">—</div></div>
+  </div>
+  <div class="two" style="margin-top:16px">
+    <div class="card"><h3>Pemakaian 7 hari terakhir (jam)</h3><div class="bars" id="bars"></div></div>
+    <div class="card"><div class="row" style="margin:0 0 8px;align-items:center;justify-content:space-between"><h3 style="margin:0">Riwayat nyala &amp; mati</h3><button class="btn ghost" id="usageReset">Reset</button></div><ul class="list" id="usageHistory"></ul></div>
+  </div>
+</section>
+</main>
+
+<dialog id="cfgDlg">
+  <h3 style="font-weight:400;font-size:22px">Koneksi Blynk</h3>
+  <label for="cfgToken">Auth Token Blynk</label><input type="text" id="cfgToken" placeholder="Token dari Device Info">
+  <div class="row"><button class="btn" id="cfgSave">Simpan &amp; Hubungkan</button><button class="btn ghost" id="cfgClose">Tutup</button></div>
+  <div class="sub" id="cfgMsg">Data tersimpan di browser ini (LocalStorage).</div>
+</dialog>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+const SV=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){console.error('Gagal menyimpan data lokal',e)}};
+
+// ================= KONFIGURASI BLYNK =================
+const DEFAULT_TOKEN="jSR4e6WxgUri33HyWlCpTjtqa4Nk23zx";
+const API="https://blynk.cloud/external/api";
+// Pin: V0 lampu, V1 timer(menit), V2 jadwal, V3 status "ON|AUTO|SUMBER", V4 mode(1=AUTO), V5 jarak
+let cfg=Object.assign({token:DEFAULT_TOKEN},LS('blynkCfg',{}));
+if(!cfg.token)cfg.token=DEFAULT_TOKEN;
+
+// ================= STATE =================
+let S={brokerOnline:false,deviceOnline:false,mode:0,lamp:null,dist:null,sensorOnline:false,detection:'UNKNOWN',reason:'-',error:'',sch:LS('sch',[]),timerEnd:0,timerSet:0};
+const state=LS('lampState',{lastOn:0,lastOff:0,intervals:[],activeSince:0});
+let events=LS('lampEvents',[]);
+
+const fmtTime=t=>t?new Date(t).toLocaleString('id-ID'):'—';
+const hms=s=>{s=Math.max(0,Math.floor(s));return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(n=>String(n).padStart(2,'0')).join(':')};
+const esc=x=>String(x).replace(/[<>&"']/g,'');
+
+function addLog(tag,msg){const logs=LS('logs',[]);logs.unshift({t:Date.now(),tag,msg});SV('logs',logs.slice(0,150))}
+function setConn(text,cls){const el=$('#pConn');el.textContent=text;el.className='pill '+cls}
+
+// ================= BLYNK: BACA DATA =================
+async function poll(){
+  if(!cfg.token){S.brokerOnline=false;S.error='Token Blynk belum diisi. Klik status di kanan atas.';render();return}
+  try{
+    const [on,r]=await Promise.all([
+      fetch(`${API}/isHardwareConnected?token=${cfg.token}`).then(x=>x.text()),
+      fetch(`${API}/get?token=${cfg.token}&V0&V1&V3&V4&V5`).then(x=>x.json())
+    ]);
+    if(r&&r.error)throw Error(r.error.message||'token tidak valid');
+    S.brokerOnline=true;S.error='';
+    S.deviceOnline=on.trim()==='true';
+
+    if(r.V0!==undefined&&r.V0!==null&&r.V0!==''){
+      S.lamp=String(r.V0)==='1';
+      const parts=String(r.V3||'').split('|');
+      S.reason=parts[2]||'-';
+      setLampStatus(S.lamp,S.reason);
+    }
+    S.mode=String(r.V4)==='1'?1:0;
+
+    if(S.deviceOnline){
+      const d=parseFloat(r.V5);
+      if(!isNaN(d)&&d>0){S.sensorOnline=true;S.dist=d;S.detection=d<=150?'DETECTED':'NOT_DETECTED'}
+      else{S.sensorOnline=false;S.dist=-1;S.detection='OFFLINE'}
+    }else{S.dist=null;S.sensorOnline=false;S.detection='UNKNOWN'}
+
+    // timer: ESP32 menulis V1=0 saat timer selesai/batal
+    if(S.timerEnd&&String(r.V1)==='0'&&Date.now()-S.timerSet>6000)S.timerEnd=0;
+  }catch(e){
+    S.brokerOnline=false;
+    S.error='Gagal terhubung ke Blynk: '+e.message;
+  }
+  render();
+}
+
+// ================= BLYNK: KIRIM PERINTAH =================
+async function send(pin,val){
+  const r=await fetch(`${API}/update?token=${cfg.token}&${pin}=${encodeURIComponent(val)}`);
+  if(!r.ok)throw Error('Gagal mengirim perintah ke Blynk.');
+}
+function needDevice(){
+  if(!S.brokerOnline) throw Error('Website belum terhubung ke Blynk.');
+  if(!S.deviceOnline) throw Error('ESP32 sedang offline.');
+}
+async function commandLamp(on){
+  needDevice();
+  await send('V0',on?1:0);
+  S.mode=0;S.lamp=on;S.reason='WEB DASHBOARD';setLampStatus(on,'WEB DASHBOARD');
+  addLog('lamp',`Perintah ${on?'ON':'OFF'} dikirim`);render();
+}
+async function setMode(m){
+  needDevice();
+  await send('V4',m==='auto'?1:0);
+  S.mode=m==='auto'?1:0;addLog('mode',`Mode ${m==='auto'?'Otomatis':'Manual'} dikirim`);render();
+}
+async function startTimer(){
+  needDevice();
+  const min=parseInt($('#tmMin').value,10);
+  if(!(min>=1&&min<=600)) throw Error('Isi durasi antara 1 sampai 600 menit.');
+  await send('V1',min);
+  S.timerSet=Date.now();S.timerEnd=Date.now()+min*60000;S.lamp=true;S.reason='TIMER';
+  setLampStatus(true,'TIMER');
+  addLog('lamp',`Timer ${min} menit dimulai`);render();
+}
+async function stopTimer(){
+  needDevice();
+  await send('V1',0);
+  S.timerEnd=0;addLog('lamp','Timer dibatalkan');render();
+}
+
+// ================= JADWAL (dikirim ke ESP32 lewat V2) =================
+// Format: "18:00,05:30,1111111;07:00,08:00,1111100" (hari Sen..Min), "-" jika kosong
+function schText(list){
+  if(!list.length) return '-';
+  return list.map(s=>{
+    const flags=[1,2,3,4,5,6,0].map(d=>(s.days||[]).includes(d)?1:0).join('');
+    return `${s.on},${s.off},${flags}`;
+  }).join(';');
+}
+async function saveSch(list){
+  S.sch=list;SV('sch',list);renderSch();
+  await send('V2',schText(list));
+  addLog('sch','Jadwal dikirim ke ESP32');
+}
+async function addSch(){
+  const on=$('#schOn').value,off=$('#schOff').value,days=$$('#scheduleDays input:checked').map(i=>+i.value);
+  if(!on||!off) throw Error('Isi jam menyala dan jam mati.');
+  if(on===off) throw Error('Jam menyala dan jam mati tidak boleh sama.');
+  if(!days.length) throw Error('Pilih minimal satu hari.');
+  if(S.sch.length>=5) throw Error('Maksimal 5 jadwal.');
+  await saveSch([...S.sch,{id:Date.now(),on,off,days}]);
+}
+
+async function runAction(action){try{await action()}catch(e){addLog('net',e.message);alert(e.message)}}
+
+// ================= USAGE CALCULATIONS =================
+function setLampStatus(value,source){
+  if(value===null)return;
+  if(S.previousLamp===undefined){S.previousLamp=value;if(value&&!state.activeSince)state.activeSince=Date.now();SV('lampState',state);return}
+  if(value===S.previousLamp)return;
+  S.previousLamp=value;
+  const event={type:value?'ON':'OFF',t:Date.now(),src:source};
+  events.unshift(event);events=events.slice(0,250);SV('lampEvents',events);
+  if(value){state.lastOn=event.t;state.activeSince=event.t}
+  else{state.lastOff=event.t;if(state.activeSince){state.intervals=state.intervals||[];state.intervals.push({start:state.activeSince,end:event.t});state.activeSince=0}}
+  SV('lampState',state);addLog('lamp',`Lampu ${event.type} (${source||'-'})`);
+}
+
+function usageBetween(a,b){
+  const now=Date.now(),ov=(s,e)=>Math.max(0,Math.min(e,b)-Math.max(s,a))/1000;
+  return (state.intervals||[]).reduce((t,x)=>t+ov(x.start,x.end),0)+(state.activeSince?ov(state.activeSince,now):0);
+}
+
+function renderUsage(){
+  const left=S.timerEnd-Date.now();if(left<=0)S.timerEnd=0;
+  $('#timerDisplay').textContent=S.timerEnd?hms(left/1000):'Tidak aktif';
+  $('#lastOn').textContent=fmtTime(state.lastOn);
+  $('#lastOff').textContent=fmtTime(state.lastOff);
+  const now=Date.now(),active=state.activeSince?Math.floor((now-state.activeSince)/1000):0;
+  const day=new Date();day.setHours(0,0,0,0);
+  const total=usageBetween(day.getTime(),now+1);
+  ['#currentUsage','#currentUsage2'].forEach(s=>$(s).textContent=hms(active));
+  ['#dailyUsage','#dailyUsage2'].forEach(s=>$(s).textContent=hms(total));
+
+  const days=[];
+  for(let i=6;i>=0;i--){const d=new Date(day);d.setDate(d.getDate()-i);const a=d.getTime(),e=new Date(d).setDate(d.getDate()+1);days.push({d,h:usageBetween(a,e)/3600})}
+  const max=Math.max(1,...days.map(x=>x.h));
+  $('#bars').innerHTML=days.map(x=>`<div><span>${x.h.toFixed(1)}</span><i style="height:${Math.max(2,x.h/max*130)}px"></i><span>${x.d.toLocaleDateString('id-ID',{weekday:'short'})}</span></div>`).join('');
+
+  const history=$('#usageHistory');history.replaceChildren();
+  if(!events.length){history.innerHTML='<li>Belum ada riwayat.</li>';return}
+  events.forEach(ev=>{
+    const item=document.createElement('li'),time=document.createElement('time'),tag=document.createElement('span'),msg=document.createElement('span');
+    time.textContent=new Date(ev.t).toLocaleString('id-ID');tag.className='tag';tag.textContent=ev.type==='ON'?'MENYALA':'MATI';
+    msg.textContent=ev.src?'Sumber: '+ev.src:'';item.append(time,tag,msg);history.append(item);
+  });
+}
+
+// ================= JADWAL (tampilan) =================
+const DAYS=[['Sen',1],['Sel',2],['Rab',3],['Kam',4],['Jum',5],['Sab',6],['Min',0]];
+$('#scheduleDays').innerHTML=DAYS.map(([n,v])=>`<label><input type="checkbox" value="${v}" checked>${n}</label>`).join('');
+function renderSch(){
+  const ul=$('#scheduleList');
+  if(!S.sch.length){ul.innerHTML='<li>Belum ada jadwal.</li>';return}
+  ul.innerHTML=S.sch.map(s=>{
+    const d=(s.days||[]),txt=d.length===7?'Setiap hari':DAYS.filter(x=>d.includes(x[1])).map(x=>x[0]).join(', ');
+    return `<li><span style="flex:1"><b style="font-weight:500">${esc(s.on)} – ${esc(s.off)}</b><div class="sub" style="margin:2px 0 0">${txt}</div></span><button class="btn ghost" data-del="${esc(s.id)}">Hapus</button></li>`;
+  }).join('');
+}
+$('#scheduleList').onclick=e=>{const b=e.target.closest('[data-del]');if(b)runAction(()=>saveSch(S.sch.filter(x=>String(x.id)!==b.dataset.del)))};
+
+// ================= RENDER =================
+function sensorStatusBadge(){
+  if(!S.deviceOnline||!S.sensorOnline||S.dist===null||S.dist<0)return {text:'Sensor Offline',detected:false};
+  return S.detection==='DETECTED'?{text:'Ada Orang',detected:true}:{text:'Tidak Ada Orang',detected:false};
+}
+
+function render(){
+  if(!S.brokerOnline)setConn('Belum terhubung','bad');
+  else setConn(S.deviceOnline?'ESP32 Online':'ESP32 Offline',S.deviceOnline?'ok':'bad');
+  const note=$('#demoNote');
+  if(S.error){note.textContent=S.error;note.style.display='block'}
+  else if(!S.deviceOnline){note.textContent='ESP32 offline. Data yang tampil adalah status terakhir.';note.style.display='block'}
+  else note.style.display='none';
+
+  const lampTxt=S.lamp===null?'—':S.lamp?'Menyala':'Mati';
+  $('#dLamp').textContent=lampTxt;$('#cLamp').textContent=lampTxt;
+  $$('.stage').forEach(s=>s.classList.toggle('on',S.lamp===true));
+  $('#dReason').textContent='Sumber: '+(S.lamp===null?'—':S.reason)+(S.deviceOnline?'':' (terakhir)');
+  $('#dMode').textContent=S.mode===1?'Otomatis':'Manual';
+  $$('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.m===(S.mode===1?'auto':'manual')));
+  const valid=!(S.dist===null||S.dist<0);
+  $('#dDist').textContent=valid?S.dist.toFixed(1):'—';
+  const det=sensorStatusBadge();
+  $('#dDetect').textContent=det.text;
+  $('#distanceMeter').style.width=valid?`${Math.max(0,Math.min(100,(1-S.dist/300)*100))}%`:'0%';
+  $('#distanceMeter').style.background=det.detected?'var(--ok)':'#6d675f';
+  renderUsage();
+}
+
+// ================= UI NAVIGATION =================
+function go(v){
+  $$('#side a').forEach(x=>{const on=x.dataset.v===v;x.classList.toggle('on',on);if(on)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});
+  $$('section').forEach(s=>s.classList.toggle('on',s.id===v));
+  window.scrollTo(0,0);render();
+}
+$$('#side a').forEach(a=>a.onclick=e=>{e.preventDefault();go(a.dataset.v)});
+setInterval(renderUsage,1000);
+
+$('#lampOn').onclick=()=>runAction(()=>commandLamp(true));
+$('#lampOff').onclick=()=>runAction(()=>commandLamp(false));
+$$('#seg button').forEach(b=>b.onclick=()=>runAction(()=>setMode(b.dataset.m)));
+$('#tmGo').onclick=()=>runAction(startTimer);
+$('#tmStop').onclick=()=>runAction(stopTimer);
+$('#schGo').onclick=()=>runAction(addSch);
+
+$('#usageReset').onclick=()=>{
+  if(!confirm('Reset riwayat penggunaan lampu?'))return;
+  events=[];state.lastOn=0;state.lastOff=0;state.intervals=[];state.activeSince=S.lamp===true?Date.now():0;
+  SV('lampEvents',events);SV('lampState',state);renderUsage();
+};
+
+// Pengaturan token (dialog)
+$('#cfgToken').value=cfg.token;
+$('#pConn').onclick=()=>$('#cfgDlg').showModal();
+$('#cfgClose').onclick=()=>$('#cfgDlg').close();
+$('#cfgSave').onclick=()=>{
+  cfg={token:$('#cfgToken').value.trim()};
+  SV('blynkCfg',cfg);$('#cfgMsg').textContent='Tersimpan. Menghubungkan…';poll();
+  setTimeout(()=>$('#cfgDlg').close(),600);
+};
+
+renderSch();render();poll();
+setInterval(poll,2000);
+</script>
+</body>
+</html>
